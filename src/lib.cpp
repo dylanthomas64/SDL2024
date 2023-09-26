@@ -32,9 +32,9 @@ std::uniform_int_distribution<> cd(0, 0xFF);
 
 
 RectangleObject::RectangleObject(SDL_Rect rect) : rect(rect), v(0.0) {
-	this->origin = Point{
-		rect.x,
-		rect.y,
+	this->origin = Float_Point{
+		static_cast<double>(rect.x),
+		static_cast<double>(rect.y),
 	};
 	Uint8 r = cd(gen);
 	Uint8 g = cd(gen);
@@ -47,7 +47,7 @@ RectangleObject::RectangleObject() : v(0.0) {
 	
 	SDL_Rect rect{0, 0, 0, 0};
 	this->rect = rect;
-	this->origin = Point{ rect.x, rect.y };
+	this->origin = Float_Point{ 0.0, 0.0};
 
 	this->color = SDL_Color{};
 	this->color.r = 0x00;
@@ -163,28 +163,39 @@ std::vector<RectangleObject> create_rectangle_objects(int n, int size) {
 }
 
 
-void process(SDL_Renderer* renderer, std::vector<RectangleObject>& vec_rec, Uint32 delta_time, Floor &floor) {
-	clear_screen(renderer);
+int process(SDL_Renderer* renderer, std::vector<RectangleObject>& vec_rec, Floor &floor, int previous_call_ticks) {
+	
+	int start_time = SDL_GetTicks();
 
 	//render_floor(renderer, floor);
 	for (int i = 0; i < vec_rec.size(); i++) {
-		if (vec_rec.at(i).rect.y > SCREEN_HEIGHT) {
-			vec_rec.erase(vec_rec.begin() + i);
-			std::cout << "erased";
+		if (vec_rec.at(i).rect.y >= SCREEN_HEIGHT) {
+			//vec_rec.erase(vec_rec.begin() + i);
+			//std::cout << "erased ";
+			vec_rec.at(i).v = -1;
+			//vec_rec.at(i).v = -0.4 * vec_rec.at(i).v;
 		}
-		else {
-			draw_filled_rectangle(renderer, vec_rec.at(i).rect, vec_rec.at(i).color);
-			// v = u + at
-			vec_rec.at(i).v += 9.81 * delta_time;
-			// s1 = s0 + vt
-			double new_y = vec_rec.at(i).origin.y + (vec_rec.at(i).v) * delta_time;
-			vec_rec.at(i).rect.y = new_y;
-
-			//if (new_y > floor.)
-
-		}
-		
+		// get delta t in seconds
+		double delta_t = static_cast<double>(start_time - previous_call_ticks)/1000;
+		//draw_filled_rectangle(renderer, vec_rec.at(i).rect, vec_rec.at(i).color);
+		// v = u + at
+		vec_rec.at(i).v += 9.81 * delta_t;
+		// s1 = s0 + vt
+		double new_y = vec_rec.at(i).origin.y + (vec_rec.at(i).v) * delta_t;
+		vec_rec.at(i).origin.y = new_y;
 	}
+	return start_time;
+}
+
+void render_all(SDL_Renderer* renderer, std::vector<RectangleObject> vec_rec, Floor floor) {
+	
+	clear_screen(renderer);
+	render_floor(renderer, floor);
+	for (RectangleObject obj : vec_rec) {
+		obj.rect.y = static_cast<int>(obj.origin.y);
+		draw_filled_rectangle(renderer, obj.rect, obj.color);
+	}
+
+	
 	SDL_RenderPresent(renderer);
-	//std::cout << "fulshed\n";
 }

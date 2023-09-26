@@ -4,8 +4,8 @@
 
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 900;
 
 class Test {
 public:
@@ -14,9 +14,9 @@ public:
 	~Test();
 };
 
-struct Point {
-	int x;
-	int y;
+struct Float_Point {
+	double x;
+	double y;
 };
 
 class Floor {
@@ -40,7 +40,7 @@ class RectangleObject {
 public:
 	double v;
 	SDL_Rect rect;
-	Point origin;
+	Float_Point origin;
 	SDL_Color color;
 
 	RectangleObject();
@@ -70,4 +70,6 @@ std::vector<RectangleObject> create_rectangle_objects(int n, int size);
 
 
 
-void process(SDL_Renderer* renderer, std::vector<RectangleObject>& vec_rec, Uint32 delta_time, Floor &floor);
+int process(SDL_Renderer* renderer, std::vector<RectangleObject>& vec_rec, Floor &floor, int prev);
+
+void render_all(SDL_Renderer* renderer, std::vector<RectangleObject> vec_rec, Floor floor);
