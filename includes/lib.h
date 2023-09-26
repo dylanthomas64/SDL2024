@@ -7,13 +7,6 @@
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 900;
 
-class Test {
-public:
-	int a;
-	Test();
-	~Test();
-};
-
 struct Float_Point {
 	double x;
 	double y;
@@ -29,7 +22,20 @@ public:
 	~Floor();
 };
 
-void render_floor(SDL_Renderer* renderer, Floor& floor);
+//general border class
+class Border {
+public:
+	int yPos;
+	std::vector<SDL_Point> points;
+
+	Border(int yPos);
+	~Border();
+};
+
+void render_border(SDL_Renderer* renderer, Border const &border);
+
+
+void render_floor(SDL_Renderer* renderer, Floor const &floor);
 
 struct Velocity {
 	int x;
@@ -38,7 +44,9 @@ struct Velocity {
 
 class RectangleObject {
 public:
-	double v;
+	double y_velocity;
+	double x_velocity;
+	bool in_motion;
 	SDL_Rect rect;
 	Float_Point origin;
 	SDL_Color color;
@@ -62,7 +70,7 @@ void clear_screen(SDL_Renderer* renderer);
 
 std::vector<SDL_Rect> create_rectangles(int n, int size);
 
-std::vector<RectangleObject> create_rectangle_objects(int n, int size);
+std::vector<RectangleObject> create_rectangle_objects(int n);
 
 
 
