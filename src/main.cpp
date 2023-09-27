@@ -25,10 +25,10 @@ int main(int argc, char* arg[])
 
 
 
-	std::vector<RectangleObject> vec_rec = create_rectangle_objects(40);
+	std::vector<RectangleObject> vec_rec = create_rectangle_objects(600);
 	Floor floor;
 	// 80fps => T = 1/80
-	const int fps = 150;
+	const int fps = 70;
 	int total_frames = 10'000;
 
 	int previous_call_ticks_since_start = SDL_GetTicks();

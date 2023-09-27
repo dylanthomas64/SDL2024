@@ -9,7 +9,7 @@ std::mt19937 gen(rd());
 std::uniform_int_distribution<> ud(0, SCREEN_WIDTH);
 std::uniform_int_distribution<> cd(0, 0xFF);
 std::uniform_int_distribution<> xv(-30, 30);
-std::uniform_int_distribution<> size(4, 25);
+std::uniform_int_distribution<> size(3, 18);
 
 
 
@@ -73,7 +73,7 @@ RectangleObject::~RectangleObject() = default;
 void draw_filled_rectangle(SDL_Renderer* renderer, SDL_Rect outline_rect, SDL_Color color) {
 
 	// draw outline
-	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderDrawRect(renderer, &outline_rect);
 
 	// fill shape
@@ -88,9 +88,10 @@ void draw_filled_rectangle(SDL_Renderer* renderer, SDL_Rect outline_rect, SDL_Co
 
 
  void clear_screen(SDL_Renderer* renderer) {
-	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 	//SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderClear(renderer);
+
 }
  
  
@@ -148,7 +149,7 @@ void render_floor(SDL_Renderer* renderer, Floor &floor) {
 	v.emplace_back(floor.a);
 	v.emplace_back(floor.b);
 
-	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderDrawLines(renderer, v.data(), v.size());
 	//std::cout << "floor rendered" << std::endl;
 }
@@ -193,21 +194,31 @@ int process(SDL_Renderer* renderer, std::vector<RectangleObject>& vec_rec, Floor
 		if (vec_rec.at(i).in_motion) {
 
 			// floor collision
-			if (vec_rec.at(i).origin.y + vec_rec.at(i).rect.h >= floor.yPos) {
-				//vec_rec.erase(vec_rec.begin() + i);
-				//std::cout << "erased ";
-				vec_rec.at(i).y_velocity *= -0.65;
-				//vec_rec.at(i).v = -0.4 * vec_rec.at(i).v;
+			if ((vec_rec.at(i).origin.y + vec_rec.at(i).rect.h >= floor.yPos) && vec_rec.at(i).y_velocity > 0) {
+
+				if (vec_rec.at(i).y_velocity < 0.1) {
+					vec_rec.at(i).y_velocity = 0;
+					vec_rec.at(i).origin.y = floor.yPos;
+					vec_rec.at(i).in_motion = false;
+				}
+				else {
+					//vec_rec.erase(vec_rec.begin() + i);
+					//std::cout << "erased ";
+					vec_rec.at(i).y_velocity *= -0.8;
+					vec_rec.at(i).x_velocity *= 0.8;
+					//vec_rec.at(i).v = -0.4 * vec_rec.at(i).v;
+				}
+				
 			}
 
 			//ceiling collision
 			if (vec_rec.at(i).origin.y <= 0) {
-				vec_rec.at(i).y_velocity *= -0.7;
+				vec_rec.at(i).y_velocity *= -0.75;
 			}
 
 			//wall collision
 			if (vec_rec.at(i).origin.x <= 0 || vec_rec.at(i).origin.x + vec_rec.at(i).rect.w >= SCREEN_WIDTH) {
-				vec_rec.at(i).x_velocity *= -0.7;
+				vec_rec.at(i).x_velocity *= -0.8;
 			}
 
 
@@ -216,7 +227,7 @@ int process(SDL_Renderer* renderer, std::vector<RectangleObject>& vec_rec, Floor
 			double delta_t = static_cast<double>(start_time - previous_call_ticks) / 1000;
 			//draw_filled_rectangle(renderer, vec_rec.at(i).rect, vec_rec.at(i).color);
 			// v = u + at
-			vec_rec.at(i).y_velocity += 9.81 * delta_t;
+			vec_rec.at(i).y_velocity += 80 * delta_t;
 			// s1 = s0 + vt
 			double new_y = vec_rec.at(i).origin.y + (vec_rec.at(i).y_velocity) * delta_t;
 			vec_rec.at(i).origin.y = new_y;
@@ -236,10 +247,18 @@ void render_all(SDL_Renderer* renderer, std::vector<RectangleObject> vec_rec, Fl
 	clear_screen(renderer);
 	render_floor(renderer, floor);
 	for (RectangleObject obj : vec_rec) {
-		// if yPos > floor: render at floor; else: render at yPos
-		obj.rect.y = (obj.origin.y > floor.yPos) ? floor.yPos + obj.rect.h : static_cast<int>(obj.origin.y);
-		obj.rect.x = obj.origin.x;
-		draw_filled_rectangle(renderer, obj.rect, obj.color);
+		if (obj.in_motion) {
+			// if yPos > floor: render at floor; else: render at yPos
+			obj.rect.y = (obj.origin.y > floor.yPos) ? floor.yPos - obj.rect.h : static_cast<int>(obj.origin.y);
+			obj.rect.x = obj.origin.x;
+			draw_filled_rectangle(renderer, obj.rect, obj.color);
+		}
+		else {
+			obj.rect.y = floor.yPos - obj.rect.h;
+			obj.rect.x = obj.origin.x;
+			draw_filled_rectangle(renderer, obj.rect, SDL_Color {0xFF, 0x00, 0x00, 0x88});
+		}
+		
 	}
 
 	
