@@ -143,7 +143,7 @@ void render_border(SDL_Renderer* renderer, Border const& border) {
 	SDL_RenderDrawLines(renderer, border.points.data(), border.points.size());
 }
 
-void render_floor(SDL_Renderer* renderer, Floor &floor) {
+void render_floor(SDL_Renderer* renderer, Floor const &floor) {
 	std::vector<SDL_Point> v;
 	
 	v.emplace_back(floor.a);
@@ -242,7 +242,7 @@ int process(SDL_Renderer* renderer, std::vector<RectangleObject>& vec_rec, Floor
 	return start_time;
 }
 
-void render_all(SDL_Renderer* renderer, std::vector<RectangleObject> vec_rec, Floor floor) {
+void render_all(SDL_Renderer* renderer, std::vector<RectangleObject> vec_rec, Floor const &floor) {
 	
 	clear_screen(renderer);
 	render_floor(renderer, floor);
