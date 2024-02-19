@@ -1,9 +1,9 @@
 #include <SDL.h>
 #include <iostream>
 #include <vector>
-#include "lib.h"
 #include <random>
 
+#include "floating_shapes.h"
 
 // pixels * 2 = metres
 const int SCALE = 2;

@@ -21,10 +21,18 @@
     <ClCompile Include="src\lib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\floating_shapes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\lib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="includes\floating_shapes.h">
+      <Filter>Header Files</Filter>
+    </Library>
   </ItemGroup>
 </Project>
