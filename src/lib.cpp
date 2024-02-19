@@ -183,7 +183,7 @@ std::vector<RectangleObject> create_rectangle_objects(int n) {
 }
 
 
-int process(SDL_Renderer* renderer, std::vector<RectangleObject>& vec_rec, Floor &floor, int previous_call_ticks) {
+int process(SDL_Renderer* renderer, std::vector<RectangleObject>& vec_rec, Floor const &floor, int previous_call_ticks) {
 	
 	int start_time = SDL_GetTicks();
 
@@ -242,7 +242,7 @@ int process(SDL_Renderer* renderer, std::vector<RectangleObject>& vec_rec, Floor
 	return start_time;
 }
 
-void render_all(SDL_Renderer* renderer, std::vector<RectangleObject> vec_rec, Floor const &floor) {
+void render_all(SDL_Renderer* renderer, std::vector<RectangleObject> vec_rec, Floor floor) {
 	
 	clear_screen(renderer);
 	render_floor(renderer, floor);
