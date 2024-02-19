@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FLOATING_SHAPES_H
+#define FLOATING_SHAPES_H
 
 #include <SDL.h>
 #include <vector>
@@ -90,3 +91,5 @@ void render_all(SDL_Renderer* renderer, std::vector<RectangleObject> vec_rec, Fl
 
 
 //void test();
+
+#endif

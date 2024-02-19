@@ -27,7 +27,7 @@ Floor::Floor() {
 	this->yPos = floor;
 	this->a = SDL_Point{ 0, floor };
 	this->b = SDL_Point{ SCREEN_WIDTH, floor };
-	std::cout << "floor object constructed @ " << floor;
+	//std::cout << "floor object constructed @ " << floor;
 }
 Floor::~Floor() = default;
 
@@ -171,7 +171,7 @@ std::vector<RectangleObject> create_rectangle_objects(int n) {
 	//std::cout << "\ncreating" << n << std::endl;
 	for (int i = 0; i < n; i++) {
 		int w = size(gen);
-		std::cout << n << std::endl;
+		//std::cout << n << std::endl;
 		SDL_Rect rect = { ud(gen) % SCREEN_WIDTH, ud(gen) % SCREEN_HEIGHT, w, w };
 		//std::cout << "rect created\n";
 		RectangleObject ro = RectangleObject(rect);

@@ -29,10 +29,16 @@
     <ClInclude Include="includes\lib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="includes\floating_shapes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="includes\floating_shapes.h">
-      <Filter>Header Files</Filter>
-    </Library>
+    <Image Include="examples\Image.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="examples\shapes1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
