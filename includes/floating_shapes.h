@@ -1,6 +1,5 @@
 #pragma once
 
-#pragma once
 #include <SDL.h>
 #include <vector>
 
@@ -84,10 +83,10 @@ int process(SDL_Renderer* renderer, std::vector<RectangleObject>& vec_rec, Floor
 
 void render_all(SDL_Renderer* renderer, std::vector<RectangleObject> vec_rec, Floor floor);
 
-void render_background(SDL_Renderer* renderer);
+//void render_background(SDL_Renderer* renderer);
 
 
-void render_reflection(SDL_Renderer* renderer, std::vector<RectangleObject> const vec_rec, Floor floor);
+//void render_reflection(SDL_Renderer* renderer, std::vector<RectangleObject> const vec_rec, Floor floor);
 
 
-void test();
+//void test();
