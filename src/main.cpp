@@ -13,7 +13,7 @@ and may not be redistributed without written permission.*/
 #include "foo.h"
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 640;
+const int SCREEN_WIDTH = 480;
 const int SCREEN_HEIGHT = 480;
 
 //Starts up SDL and creates window
@@ -68,16 +68,29 @@ int main(int argc, char* args[])
 
 
 			// do stuff
-			image_class.shrink(10);
-			image_class.blur();
+			image_class.shrink(6);
+			//image_class.blur();
 			image_class.updateSurface();
 			image_class.save_copy("test.png");
 
 			//load texture from surface
-			texture_class.loadFromSurface(gRenderer, &image_class);
+			/*
+			if (!texture_class.loadFromSurface(gRenderer, &image_class)) {
+				std::cout << "failed to load texture from surface\n";
+			}
+			*/
+			
+			if (!texture_class.create_blank_texture(SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer)) {
+				std::cout << "failed to create blank texture\n";
+			}
+			else {
+				std::cout << "blank texture created\n";
+			}
+
+			texture_class.draw_fractal();
 
 			
-
+			std::cout << "\nstart main loop\n";
 			//While application is running
 			while (!quit)
 			{
@@ -93,7 +106,7 @@ int main(int argc, char* args[])
 
 				//Clear screen
 				//std::cout << "clearing screen\n";
-				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0xFF, 0xFF);
+				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 				SDL_RenderClear(gRenderer);
 
 				//const int SCALE = 0;
@@ -104,6 +117,8 @@ int main(int argc, char* args[])
 
 				//Render texture
 				texture_class.render(0, 0, nullptr);
+
+
 
 
 				//Update screen

@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include "lib.h"
+#include <cmath>
 
 //Texture wrapper class
 class LTexture
@@ -30,6 +31,10 @@ public:
 	int getHeight();
 	SDL_Texture* getRaw();
 
+	bool create_blank_texture(int width, int height, SDL_Renderer* renderer);
+	bool draw_fractal();
+
+
 private:
 	//The actual hardware texture
 	SDL_Texture* mTexture;
@@ -41,3 +46,6 @@ private:
 	int mHeight;
 };
 
+std::pair<double, double> compute_next(std::pair<double, double> z, std::pair<double, double> c);
+
+double complex_abs(std::pair<double, double> c);
