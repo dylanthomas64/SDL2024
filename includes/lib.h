@@ -34,9 +34,9 @@ public:
 	//rebuilds surface from vector
 	void updateSurface();
 	void blur();
-	void shrink();
+	void shrink(int factor);
 
-	void save_copy();
+	void save_copy(std::string fn);
 
 	SDL_Surface* get_raw();
 
@@ -63,7 +63,7 @@ void do_colour_stuff_2d(SDL_Surface* surface);
 
 
 */
-void shrink(SDL_Surface* surface, int factor);
+//void shrink(SDL_Surface* surface, int factor);
 
 std::vector<std::vector<SDL_Colour>> blur(std::vector<std::vector<SDL_Colour>> vec2, int w, int h);
 

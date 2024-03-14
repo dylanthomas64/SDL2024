@@ -68,6 +68,12 @@ int main(int argc, char* args[])
 
 
 			// do stuff
+			image_class.shrink(10);
+			image_class.blur();
+			image_class.updateSurface();
+			image_class.save_copy("test.png");
+
+			//load texture from surface
 			texture_class.loadFromSurface(gRenderer, &image_class);
 
 			
@@ -86,7 +92,7 @@ int main(int argc, char* args[])
 				}
 
 				//Clear screen
-				std::cout << "clearing screen\n";
+				//std::cout << "clearing screen\n";
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0xFF, 0xFF);
 				SDL_RenderClear(gRenderer);
 

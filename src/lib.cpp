@@ -25,48 +25,64 @@ ArtSurface::~ArtSurface() {
 }
 
 bool ArtSurface::loadFromFile(std::string path) {
-	realSurface = IMG_Load(path.c_str());
+	this->realSurface = IMG_Load(path.c_str());
 	if (realSurface == nullptr)
 	{
 		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
 	}
 	else {
+		//update surface class w / h from
+		this->surface_w = realSurface->w;
+		this->surface_h = realSurface->h;
 
 		std::cout << "surface loaded\n";
 	}
+
+	std::cout << "creating vector in art surface\n";
+	create_vec();
+
 	return (realSurface != nullptr);
 }
 
 void ArtSurface::updateSurface() {
-	Uint8* raw_pixel_ptr = (Uint8*)realSurface->pixels;
-
-	int w = colour_vec.at(1).size();
-	int h = colour_vec.size();
 
 
-	realSurface->h = w;
-	realSurface->w = h;
-	realSurface->pitch = w * 4;
-
-
-
-	std::cout << "writing to surface...\n";
-	//assign to surface
-	int i = 0;
-	for (std::vector<SDL_Colour> row : colour_vec) {
-		for (SDL_Colour colour : row) {
-			raw_pixel_ptr[i] = colour.r;
-			++i;
-			raw_pixel_ptr[i] = colour.g;
-			++i;
-			raw_pixel_ptr[i] = colour.b;
-			++i;
-			raw_pixel_ptr[i] = colour.a;
-			++i;
-		}
+	//create vector
+	if ((this->colour_vec).empty()) {
+		std::cout << "Error: colour_vec is empty\n";
 	}
-	raw_pixel_ptr[++i] = NULL;
-	std::cout << "DONE!\n";
+	else {
+		Uint8* raw_pixel_ptr = (Uint8*)realSurface->pixels;
+
+
+		int w = this->colour_vec.at(0).size();
+		int h = this->colour_vec.size();
+
+
+		realSurface->h = w;
+		realSurface->w = h;
+		realSurface->pitch = w * 4;
+
+
+
+		std::cout << "writing to surface...\n";
+		//assign to surface
+		int i = 0;
+		for (std::vector<SDL_Colour> row : colour_vec) {
+			for (SDL_Colour colour : row) {
+				raw_pixel_ptr[i] = colour.r;
+				++i;
+				raw_pixel_ptr[i] = colour.g;
+				++i;
+				raw_pixel_ptr[i] = colour.b;
+				++i;
+				raw_pixel_ptr[i] = colour.a;
+				++i;
+			}
+		}
+		raw_pixel_ptr[++i] = NULL;
+		std::cout << "DONE!\n";
+	}
 }
 
 void ArtSurface::create_vec() {
@@ -92,7 +108,10 @@ void ArtSurface::create_vec() {
 		temp_vec2d.push_back(row);
 	}
 	
-	colour_vec = temp_vec2d;
+	this->colour_vec = temp_vec2d;
+	//update vec w / h
+	this->vec_w = this->realSurface->w;
+	this->vec_h = this->realSurface->h;
 	std::cout << "vector created from surface\n";
 }
 
@@ -154,10 +173,15 @@ void ArtSurface::blur() {
 	colour_vec = output_vector;
 }
 
-void ArtSurface::save_copy() {
-	std::string path = "output/img.png";
-	if (IMG_SavePNG(realSurface, "output/image.png") < 0) {
+void ArtSurface::save_copy(std::string fn) {
+
+	std::string path = "output/";
+	path.append(fn);
+	if (IMG_SavePNG(realSurface, path.c_str()) < 0) {
 		std::cout << "error saving file\n";
+	}
+	else {
+		std::cout << "File saved at: " << path << std::endl;
 	}
 }
 
@@ -227,8 +251,42 @@ std::vector<std::vector<SDL_Colour>> blur(std::vector<std::vector<SDL_Colour>> v
 
 
 
+//shrink colour vector
+void ArtSurface::shrink(int factor) {
 
 
+	//int size = realSurface->w * realSurface->h;
+	if (colour_vec.empty()) {
+		std::cout << "ERROR: colour vector is empty\n";
+	}
+
+	 
+
+	int new_w = realSurface->w / factor;
+	int new_h = realSurface->h / factor;
+
+
+	std::cout << "shrinking... ";
+	std::vector<std::vector<SDL_Colour>> shrunk_vec{};
+	for (int y = 0; y < vec_h; y += factor) {
+		std::vector<SDL_Colour> shrunk_row{};
+		for (int x = 0; x < vec_w; x += factor) {
+			shrunk_row.push_back(this->colour_vec.at(y).at(x));
+		}
+		shrunk_vec.push_back(shrunk_row);
+	}
+
+	this->colour_vec = shrunk_vec;
+	this->vec_h = shrunk_vec.size();
+	this->vec_w = shrunk_vec.at(0).size();
+
+
+	std::cout << "DONE!\n";
+}
+
+/*
+
+// shrink actual surface
 void shrink(SDL_Surface* surface, int factor) {
 	std::cout << "shrinking...\n";
 
@@ -295,7 +353,7 @@ void shrink(SDL_Surface* surface, int factor) {
 	std::cout << "DONE!\n";
 }
 
-
+*/
 
 /*
 
