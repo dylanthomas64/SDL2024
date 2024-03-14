@@ -24,6 +24,9 @@
     <ClCompile Include="src\floating_shapes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\foo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\lib.h">
@@ -32,12 +35,33 @@
     <ClInclude Include="includes\floating_shapes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="includes\foo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="examples\Image.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="examples\shapes1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="media\hello_world.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="media\dots.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="media\dylan.jpeg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="media\headshot2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="output\img.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="media\ghibli.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
