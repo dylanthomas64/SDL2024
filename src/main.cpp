@@ -13,8 +13,8 @@ and may not be redistributed without written permission.*/
 #include "foo.h"
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 480;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1080;
+const int SCREEN_HEIGHT = 1080;
 
 //Starts up SDL and creates window
 bool init();
@@ -87,7 +87,7 @@ int main(int argc, char* args[])
 				std::cout << "blank texture created\n";
 			}
 
-			texture_class.draw_fractal();
+			texture_class.draw_coloured_fractal();
 
 			
 			std::cout << "\nstart main loop\n";

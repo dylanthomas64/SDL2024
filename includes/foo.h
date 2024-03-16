@@ -33,6 +33,7 @@ public:
 
 	bool create_blank_texture(int width, int height, SDL_Renderer* renderer);
 	bool draw_fractal();
+	bool draw_coloured_fractal();
 
 
 private:

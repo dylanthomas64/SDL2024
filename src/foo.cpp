@@ -254,10 +254,117 @@ bool LTexture::draw_fractal() {
 	SDL_SetRenderTarget(this->renderer, nullptr);
 }
 
+bool LTexture::draw_coloured_fractal() {
+
+
+	int origin_x = (mWidth / 2) + 200;
+	int origin_y = mHeight / 2;
+
+	// range of axis values
+	int n_axis = 2.0;
+	int scale = origin_x / n_axis;
+	// scale = mWidth / 6
+
+
+	if (this->mTexture == nullptr) {
+		std::cout << "Error: texture is a nullptr\n";
+		return false;
+	}
+
+	// set texture to render target
+	SDL_SetRenderTarget(this->renderer, this->mTexture);
+
+	SDL_SetRenderDrawColor(this->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderClear(this->renderer);
+
+
+
+
+
+
+	
+
+	std::pair<double, double> z0{ 0.0, 0.0 };
+	std::pair<double, double> c{ 0.0, 0.0 };
+
+	std::pair<double, double> z1 = z0;
+	for (double r = -2; r <= 1; r += 0.001) {
+		c.first = r;
+		for (double i = -1; i <= 1; i += 0.001) {
+			c.second = i;
+			//std::cout << "(" << c.first << ", " << c.second << ")\t";
+
+			// reset z to 0
+			z1 = z0;
+
+
+			double boundary = 100000.0;
+			//number of iterations
+			long n = 0;
+			// iterate
+			for (double i = 0; i < 35; i++) {
+				//draw exact points as they iterate
+				//SDL_RenderDrawPoint(this->renderer, origin_x + (z1.first * scale), origin_y + (z1.second * scale));
+				z1 = compute_next(z1, c);
+				n++;
+			}
+			double distance = complex_abs(z1);
+			if (distance <= 2) {
+				//std::cout << distance << "\t";
+				// set draw colour to red
+				SDL_SetRenderDrawColor(this->renderer, 0xAA, 0x00, 0x00, 0xFF);
+				SDL_RenderDrawPoint(this->renderer, origin_x + (c.first * scale), origin_y + (c.second * scale));
+			}
+			/*
+			else if (distance >= boundary){
+				//SDL_SetRenderDrawColor(this->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+				//SDL_RenderDrawPoint(this->renderer, origin_x + (c.first * scale), origin_y + (c.second * scale));
+			}
+			*/
+			else if (distance <= boundary){
+				int pixel_intensity = (255 / boundary) * distance;
+				//std::cout << distance << "\t";
+				SDL_SetRenderDrawColor(this->renderer, 0x00, pixel_intensity, 0x00, 0xFF);
+				SDL_RenderDrawPoint(this->renderer, origin_x + (c.first * scale), origin_y + (c.second * scale));
+			}
+			
+		}
+
+	}
+
+	// draw axis
+	SDL_SetRenderDrawColor(this->renderer, 0xFF, 0xFF, 0x00, 0xFF);
+	for (int i = 0; i < mHeight; i += 4)
+	{
+		SDL_RenderDrawPoint(this->renderer, origin_x, i);
+	}
+	for (int i = 0; i < mWidth; i += 4)
+	{
+		SDL_RenderDrawPoint(this->renderer, i, origin_y);
+	}
+
+	SDL_SetRenderDrawColor(this->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	//x - axis
+	SDL_RenderDrawLine(this->renderer, origin_x + (-1 * scale), origin_y - (0.1 * scale), origin_x + (-1 * scale), origin_y + (0.1 * scale));
+	SDL_RenderDrawLine(this->renderer, origin_x + (1 * scale), origin_y - (0.1 * scale), origin_x + (1 * scale), origin_y + (0.1 * scale));
+
+	//y - axis
+	SDL_RenderDrawLine(this->renderer, origin_x + (-0.1 * scale), origin_y + (-1 * scale), origin_x + (0.1 * scale), origin_y - (1 * scale));
+	SDL_RenderDrawLine(this->renderer, origin_x + (-0.1 * scale), origin_y + (1 * scale), origin_x + (0.1 * scale), origin_y + (1 * scale));
+
+
+
+	// reset render target
+	SDL_SetRenderTarget(this->renderer, nullptr);
+
+	std::cout << "fractal created\n";
+}
+
 double complex_abs(std::pair<double, double> c) {
 
 	//return abs value of a complex number
-	return std::abs(std::sqrt(((c.first * c.first) + (c.second * c.second))));
+	double root = std::sqrt(((c.first * c.first) + (c.second * c.second)));
+	return std::abs(root);
 }
 
 std::pair<double, double> compute_next(std::pair<double, double> z, std::pair<double, double > c) {
