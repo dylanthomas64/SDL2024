@@ -68,10 +68,10 @@ int main(int argc, char* args[])
 
 
 			// do stuff
-			image_class.shrink(6);
+			//image_class.shrink(6);
 			//image_class.blur();
-			image_class.updateSurface();
-			image_class.save_copy("test.png");
+			//image_class.updateSurface();
+			//image_class.save_copy("test.png");
 
 			//load texture from surface
 			/*
@@ -87,7 +87,7 @@ int main(int argc, char* args[])
 				std::cout << "blank texture created\n";
 			}
 
-			texture_class.draw_coloured_fractal();
+			texture_class.draw_coloured_moveable_fractal(std::make_pair<double, double>(-2, 1), 2);
 
 			
 			std::cout << "\nstart main loop\n";
@@ -101,6 +101,17 @@ int main(int argc, char* args[])
 					if (e.type == SDL_QUIT)
 					{
 						quit = true;
+					}
+					//If mouse event happened
+					if (e.type == SDL_MOUSEBUTTONDOWN)
+					{
+						//Get mouse position
+						int x, y;
+						SDL_GetMouseState(&x, &y);
+						// convert pixel coords to global coords
+						//std::cout << "drawing fractal at (" << x << ", " << y << " )\n";
+						//texture_class.draw_from_pixel_coord(std::make_pair<double, double>(x, y), 0.5);
+						//texture_class.render(0, 0, nullptr);
 					}
 				}
 

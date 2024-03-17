@@ -256,13 +256,33 @@ bool LTexture::draw_fractal() {
 
 bool LTexture::draw_coloured_fractal() {
 
+	//boxed area c(r1, i1) to c(r2, i2)
+	//get axis
+	int r1 = -2;
+	int r2 = 1;
+	int i1 = -1;
+	int i2 = 1;
+	if (r1 > r2 || i1 > i2) {
+		std::cout << "Error: Invalid area coordinates (top left to bottom right)";
+	}
 
-	int origin_x = (mWidth / 2) + 200;
-	int origin_y = mHeight / 2;
+	int r_range = abs(r1) + abs(r2);
+	int i_range = abs(i1) + abs(i2);
+
+	double increment = 0.001;
+
+	double boundary = 100.0;
+	//number of iterations
+	int iterations = 20;
+
+	int middle_x = (mWidth / 2);
+	int middle_y = mHeight / 2;
+
+
 
 	// range of axis values
 	int n_axis = 2.0;
-	int scale = origin_x / n_axis;
+	int scale = middle_x / n_axis;
 	// scale = mWidth / 6
 
 
@@ -288,32 +308,33 @@ bool LTexture::draw_coloured_fractal() {
 	std::pair<double, double> c{ 0.0, 0.0 };
 
 	std::pair<double, double> z1 = z0;
-	for (double r = -2; r <= 1; r += 0.001) {
+	for (double r = r1; r <= r2; r += increment) {
 		c.first = r;
-		for (double i = -1; i <= 1; i += 0.001) {
+		for (double i = i1; i <= i2; i += increment) {
 			c.second = i;
 			//std::cout << "(" << c.first << ", " << c.second << ")\t";
 
 			// reset z to 0
 			z1 = z0;
 
-
-			double boundary = 100000.0;
-			//number of iterations
 			long n = 0;
 			// iterate
-			for (double i = 0; i < 35; i++) {
+			for (double i = 0; i < iterations; i++) {
 				//draw exact points as they iterate
 				//SDL_RenderDrawPoint(this->renderer, origin_x + (z1.first * scale), origin_y + (z1.second * scale));
+				if (z1.first * z1.first + z1.second * z1.second > boundary*boundary) {
+					//colour realtive to n;
+					break;
+				}
 				z1 = compute_next(z1, c);
 				n++;
 			}
-			double distance = complex_abs(z1);
-			if (distance <= 2) {
+			//double distance = complex_abs(z1);
+			if (z1.first * z1.first + z1.second * z1.second <= 2*2) {
 				//std::cout << distance << "\t";
 				// set draw colour to red
-				SDL_SetRenderDrawColor(this->renderer, 0xAA, 0x00, 0x00, 0xFF);
-				SDL_RenderDrawPoint(this->renderer, origin_x + (c.first * scale), origin_y + (c.second * scale));
+				SDL_SetRenderDrawColor(this->renderer, 0xFF, 0x00, 0x00, 0xFF);
+				SDL_RenderDrawPoint(this->renderer, middle_x + (c.first * scale), middle_y + (c.second * scale));
 			}
 			/*
 			else if (distance >= boundary){
@@ -321,11 +342,11 @@ bool LTexture::draw_coloured_fractal() {
 				//SDL_RenderDrawPoint(this->renderer, origin_x + (c.first * scale), origin_y + (c.second * scale));
 			}
 			*/
-			else if (distance <= boundary){
-				int pixel_intensity = (255 / boundary) * distance;
+			else {
+				int pixel_intensity = (255 * n/iterations);
 				//std::cout << distance << "\t";
-				SDL_SetRenderDrawColor(this->renderer, 0x00, pixel_intensity, 0x00, 0xFF);
-				SDL_RenderDrawPoint(this->renderer, origin_x + (c.first * scale), origin_y + (c.second * scale));
+				SDL_SetRenderDrawColor(this->renderer, 0x00, pixel_intensity, pixel_intensity*0.6, 0xFF);
+				SDL_RenderDrawPoint(this->renderer, middle_x + (c.first * scale), middle_y + (c.second * scale));
 			}
 			
 		}
@@ -336,21 +357,21 @@ bool LTexture::draw_coloured_fractal() {
 	SDL_SetRenderDrawColor(this->renderer, 0xFF, 0xFF, 0x00, 0xFF);
 	for (int i = 0; i < mHeight; i += 4)
 	{
-		SDL_RenderDrawPoint(this->renderer, origin_x, i);
+		SDL_RenderDrawPoint(this->renderer, middle_x, i);
 	}
 	for (int i = 0; i < mWidth; i += 4)
 	{
-		SDL_RenderDrawPoint(this->renderer, i, origin_y);
+		SDL_RenderDrawPoint(this->renderer, i, middle_y);
 	}
 
 	SDL_SetRenderDrawColor(this->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	//x - axis
-	SDL_RenderDrawLine(this->renderer, origin_x + (-1 * scale), origin_y - (0.1 * scale), origin_x + (-1 * scale), origin_y + (0.1 * scale));
-	SDL_RenderDrawLine(this->renderer, origin_x + (1 * scale), origin_y - (0.1 * scale), origin_x + (1 * scale), origin_y + (0.1 * scale));
+	SDL_RenderDrawLine(this->renderer, middle_x + (-1 * scale), middle_y - (0.1 * scale), middle_x + (-1 * scale), middle_y + (0.1 * scale));
+	SDL_RenderDrawLine(this->renderer, middle_x + (1 * scale), middle_y - (0.1 * scale), middle_x + (1 * scale), middle_y + (0.1 * scale));
 
 	//y - axis
-	SDL_RenderDrawLine(this->renderer, origin_x + (-0.1 * scale), origin_y + (-1 * scale), origin_x + (0.1 * scale), origin_y - (1 * scale));
-	SDL_RenderDrawLine(this->renderer, origin_x + (-0.1 * scale), origin_y + (1 * scale), origin_x + (0.1 * scale), origin_y + (1 * scale));
+	SDL_RenderDrawLine(this->renderer, middle_x + (-0.1 * scale), middle_y + (-1 * scale), middle_x + (0.1 * scale), middle_y - (1 * scale));
+	SDL_RenderDrawLine(this->renderer, middle_x + (-0.1 * scale), middle_y + (1 * scale), middle_x + (0.1 * scale), middle_y + (1 * scale));
 
 
 
@@ -359,6 +380,220 @@ bool LTexture::draw_coloured_fractal() {
 
 	std::cout << "fractal created\n";
 }
+
+bool LTexture::draw_coloured_moveable_fractal(std::pair<double, double> top_left_coord, double range) {
+	this->r = top_left_coord.first;
+	this->i = top_left_coord.second;
+	
+	//boxed area c(r1, i1) to c(r2, i2)
+	//get axis
+	//x min
+	int r_min = this->r;
+	int r_max = r_min + range;
+	//y max
+	int i_max = this->i;
+	int i_min = i_max - range;
+	
+	if (r_min > r_max || i_min > i_max) {
+		std::cout << "Error: Invalid area coordinates (top left to bottom right)";
+	}
+
+	double increment = 0.0005;
+
+	double boundary = 100.0;
+	//number of iterations
+	int iterations = 50;
+
+	// pixels per x value
+	int scale = mWidth / range;
+
+	this->scale = scale;
+
+
+
+	if (this->mTexture == nullptr) {
+		std::cout << "Error: texture is a nullptr\n";
+		return false;
+	}
+
+	// set texture to render target
+	SDL_SetRenderTarget(this->renderer, this->mTexture);
+
+	SDL_SetRenderDrawColor(this->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderClear(this->renderer);
+
+
+
+
+
+
+
+
+	std::pair<double, double> z0{ 0.0, 0.0 };
+	std::pair<double, double> c{ 0.0, 0.0 };
+
+	std::pair<double, double> z1 = z0;
+	for (double r = r_min; r <= r_max; r += increment) {
+		c.first = r;
+		for (double i = i_min; i <= i_max; i += increment) {
+			c.second = i;
+			//std::cout << "(" << c.first << ", " << c.second << ")\t";
+
+			// reset z to 0
+			z1 = z0;
+
+			long n = 0;
+			// iterate
+			for (double i = 0; i < iterations; i++) {
+				//draw exact points as they iterate
+				//SDL_RenderDrawPoint(this->renderer, origin_x + (z1.first * scale), origin_y + (z1.second * scale));
+				if (z1.first * z1.first + z1.second * z1.second > boundary * boundary) {
+					//colour realtive to n;
+					break;
+				}
+				z1 = compute_next(z1, c);
+				n++;
+			}
+			//double distance = complex_abs(z1);
+			if (z1.first * z1.first + z1.second * z1.second <= 2 * 2) {
+				//std::cout << distance << "\t";
+				// set draw colour to red
+				SDL_SetRenderDrawColor(this->renderer, 0xFF, 0x00, 0x00, 0xFF);
+				SDL_RenderDrawPoint(this->renderer, (c.first - r_min) * scale, abs(c.second - i_max) * scale);
+			}
+			/*
+			else if (distance >= boundary){
+				//SDL_SetRenderDrawColor(this->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+				//SDL_RenderDrawPoint(this->renderer, origin_x + (c.first * scale), origin_y + (c.second * scale));
+			}
+			*/
+			else {
+				int pixel_intensity = (255 * n / iterations);
+				//std::cout << distance << "\t";
+				SDL_SetRenderDrawColor(this->renderer, 0x00, pixel_intensity, pixel_intensity * 0.6, 0xFF);
+				SDL_RenderDrawPoint(this->renderer, (c.first - r_min) * scale, abs(c.second - i_max) * scale);
+			}
+
+		}
+
+	}
+
+	
+
+	// reset render target
+	SDL_SetRenderTarget(this->renderer, nullptr);
+
+	std::cout << "fractal created\n";
+}
+bool LTexture::draw_fractal(double range) {
+
+	int r_min = this->r;
+	int r_max = r_min + range;
+	//y max
+	int i_max = this->i;
+	int i_min = i_max - range;
+
+	if (r_min > r_max || i_min > i_max) {
+		std::cout << "Error: Invalid area coordinates (top left to bottom right)";
+	}
+
+	double increment = 0.001;
+
+	double boundary = 100.0;
+	//number of iterations
+	int iterations = 20;
+
+	// pixels per x value
+	int scale = mWidth / range;
+
+	this->scale = scale;
+
+
+
+	if (this->mTexture == nullptr) {
+		std::cout << "Error: texture is a nullptr\n";
+		return false;
+	}
+
+	// set texture to render target
+	SDL_SetRenderTarget(this->renderer, this->mTexture);
+
+	SDL_SetRenderDrawColor(this->renderer, 0x00, 0xFF, 0x00, 0xFF);
+	SDL_RenderClear(this->renderer);
+
+
+
+
+
+
+
+
+	std::pair<double, double> z0{ 0.0, 0.0 };
+	std::pair<double, double> c{ 0.0, 0.0 };
+
+	std::pair<double, double> z1 = z0;
+	for (double r = r_min; r <= r_max; r += increment) {
+		c.first = r;
+		for (double i = i_min; i <= i_max; i += increment) {
+			c.second = i;
+			//std::cout << "(" << c.first << ", " << c.second << ")\t";
+
+			// reset z to 0
+			z1 = z0;
+
+			long n = 0;
+			// iterate
+			for (double i = 0; i < iterations; i++) {
+				//draw exact points as they iterate
+				//SDL_RenderDrawPoint(this->renderer, origin_x + (z1.first * scale), origin_y + (z1.second * scale));
+				if (z1.first * z1.first + z1.second * z1.second > boundary * boundary) {
+					//colour realtive to n;
+					break;
+				}
+				z1 = compute_next(z1, c);
+				n++;
+			}
+			//double distance = complex_abs(z1);
+			if (z1.first * z1.first + z1.second * z1.second <= 2 * 2) {
+				//std::cout << distance << "\t";
+				// set draw colour to red
+				SDL_SetRenderDrawColor(this->renderer, 0xFF, 0x00, 0x00, 0xFF);
+				SDL_RenderDrawPoint(this->renderer, (c.first - r_min) * scale, abs(c.second - i_max) * scale);
+			}
+			/*
+			else if (distance >= boundary){
+				//SDL_SetRenderDrawColor(this->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+				//SDL_RenderDrawPoint(this->renderer, origin_x + (c.first * scale), origin_y + (c.second * scale));
+			}
+			*/
+			else {
+				int pixel_intensity = (255 * n / iterations);
+				//std::cout << distance << "\t";
+				SDL_SetRenderDrawColor(this->renderer, 0x00, pixel_intensity, pixel_intensity * 0.6, 0xFF);
+				SDL_RenderDrawPoint(this->renderer, (c.first - r_min) * scale, abs(c.second - i_max) * scale);
+			}
+
+		}
+
+	}
+
+
+
+	// reset render target
+	SDL_SetRenderTarget(this->renderer, nullptr);
+
+	std::cout << "fractal created\n";
+}
+
+bool LTexture::draw_from_pixel_coord(std::pair<double, double> top_left_pixel_coord, double range) {
+
+	this->r += (top_left_pixel_coord.first / this->scale);
+	this->i -= (top_left_pixel_coord.second / this->scale);
+	draw_fractal(2.0);
+
+	return true;
+}
+
 
 double complex_abs(std::pair<double, double> c) {
 

@@ -34,6 +34,9 @@ public:
 	bool create_blank_texture(int width, int height, SDL_Renderer* renderer);
 	bool draw_fractal();
 	bool draw_coloured_fractal();
+	bool draw_coloured_moveable_fractal(std::pair<double, double> top_left_global_coord, double range);
+	bool draw_from_pixel_coord(std::pair<double, double> top_left_pixel_coord, double range);
+	bool draw_fractal(double range);
 
 
 private:
@@ -45,6 +48,12 @@ private:
 	//Image dimensions
 	int mWidth;
 	int mHeight;
+
+	//fractal top left global coord
+	double r;
+	double i;
+	//pixels per value
+	double scale;
 };
 
 std::pair<double, double> compute_next(std::pair<double, double> z, std::pair<double, double> c);
