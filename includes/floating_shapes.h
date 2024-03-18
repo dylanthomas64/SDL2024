@@ -92,4 +92,8 @@ void render_all(SDL_Renderer* renderer, std::vector<RectangleObject> vec_rec, Fl
 
 //void test();
 
+
+void floating_shapes();
+
+
 #endif
