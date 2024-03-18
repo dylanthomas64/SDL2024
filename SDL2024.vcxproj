@@ -142,12 +142,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\boid.cpp" />
     <ClCompile Include="src\foo.cpp" />
     <ClCompile Include="src\floating_shapes.cpp" />
     <ClCompile Include="src\lib.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\boid.h" />
     <ClInclude Include="includes\foo.h" />
     <ClInclude Include="includes\floating_shapes.h" />
     <ClInclude Include="includes\lib.h" />
