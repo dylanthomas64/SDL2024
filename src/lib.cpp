@@ -35,10 +35,10 @@ bool ArtSurface::loadFromFile(std::string path) {
 		this->surface_w = realSurface->w;
 		this->surface_h = realSurface->h;
 
-		std::cout << "surface loaded\n";
+		//std::cout << "surface loaded\n";
 	}
 
-	std::cout << "creating vector in art surface\n";
+	//std::cout << "creating vector in art surface\n";
 	create_vec();
 
 	return (realSurface != nullptr);
@@ -65,7 +65,7 @@ void ArtSurface::updateSurface() {
 
 
 
-		std::cout << "writing to surface...\n";
+		//std::cout << "writing to surface...\n";
 		//assign to surface
 		int i = 0;
 		for (std::vector<SDL_Colour> row : colour_vec) {
@@ -81,7 +81,7 @@ void ArtSurface::updateSurface() {
 			}
 		}
 		raw_pixel_ptr[++i] = NULL;
-		std::cout << "DONE!\n";
+		//std::cout << "DONE!\n";
 	}
 }
 
@@ -112,7 +112,7 @@ void ArtSurface::create_vec() {
 	//update vec w / h
 	this->vec_w = this->realSurface->w;
 	this->vec_h = this->realSurface->h;
-	std::cout << "vector created from surface\n";
+	//std::cout << "vector created from surface\n";
 }
 
 void ArtSurface::blur() {

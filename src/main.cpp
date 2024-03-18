@@ -13,8 +13,9 @@ and may not be redistributed without written permission.*/
 #include "foo.h"
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 1080;
-const int SCREEN_HEIGHT = 1080;
+const int SCREEN_WIDTH = 500;
+const int SCREEN_HEIGHT = 500;
+
 
 //Starts up SDL and creates window
 bool init();
@@ -68,9 +69,9 @@ int main(int argc, char* args[])
 
 
 			// do stuff
-			//image_class.shrink(6);
+			image_class.shrink(6);
 			//image_class.blur();
-			//image_class.updateSurface();
+			image_class.updateSurface();
 			//image_class.save_copy("test.png");
 
 			//load texture from surface
@@ -83,14 +84,15 @@ int main(int argc, char* args[])
 			if (!texture_class.create_blank_texture(SCREEN_WIDTH, SCREEN_HEIGHT, gRenderer)) {
 				std::cout << "failed to create blank texture\n";
 			}
-			else {
-				std::cout << "blank texture created\n";
-			}
 
-			texture_class.draw_coloured_moveable_fractal(std::make_pair<double, double>(-2, 1), 2);
+			int iterations = 500;
+			long long int boundary = 100'000'000LL;
+			texture_class.set_fractal_detail(iterations, boundary);
 
+			std::cout << "\nFRACTAL EXPLORER!\n" << "\niterations: " << iterations << "\nboundary : " << boundary << std::endl;
+
+			texture_class.draw_offset_fractal(std::make_pair<double, double>(0, 0), 1);
 			
-			std::cout << "\nstart main loop\n";
 			//While application is running
 			while (!quit)
 			{
@@ -103,15 +105,23 @@ int main(int argc, char* args[])
 						quit = true;
 					}
 					//If mouse event happened
-					if (e.type == SDL_MOUSEBUTTONDOWN)
-					{
-						//Get mouse position
+					if (e.type == SDL_MOUSEBUTTONDOWN) {
+
 						int x, y;
 						SDL_GetMouseState(&x, &y);
-						// convert pixel coords to global coords
-						//std::cout << "drawing fractal at (" << x << ", " << y << " )\n";
-						//texture_class.draw_from_pixel_coord(std::make_pair<double, double>(x, y), 0.5);
-						//texture_class.render(0, 0, nullptr);
+
+						if (e.button.button == SDL_BUTTON_LEFT) {
+							std::cout << "zooming...\n";
+							texture_class.draw_from_pixel_coord(std::make_pair<double, double>(x, y), 3.0);
+						}
+
+						else if (e.button.button == SDL_BUTTON_RIGHT) {
+							// convert pixel coords to global coords
+							std::cout << "zooming out...\n";
+							texture_class.draw_from_pixel_coord(std::make_pair<double, double>(x, y), 0.3);
+						}
+
+						
 					}
 				}
 
