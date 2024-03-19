@@ -18,11 +18,13 @@ public:
 	float vy{ 0 };
 	int separation{ 5 };
 	int vision_radius{ 20 };
+	double fov = 0.5 * 3.14;
 
 	double avoidance_factor{ 1 };
 	double alignment_factor{ 1 };
 	double cohesion_factor{ 1 };
 	double turn_factor{ 1 };
+
 
 	SDL_Colour colour;
 
@@ -55,3 +57,18 @@ private:
 
 	std::vector<Boid> boids;
 };
+
+
+
+//Starts up SDL and creates window
+bool init();
+
+//Frees media and shuts down SDL
+void close();
+
+extern SDL_Renderer* gRenderer;
+extern const int SCREEN_WIDTH;
+extern const int SCREEN_HEIGHT;
+
+// run program
+void run_boids();

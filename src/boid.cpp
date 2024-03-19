@@ -56,9 +56,30 @@ void Boid::react_to_local_boids(std::vector<Boid> all_boids) {
 	//find all local boids within separation radius
 	std::vector<Boid> colliding_boids{};
 	for (Boid boid : local_boids) {
-		int distance_squared = (abs(this->x - boid.x) * abs(this->x - boid.x) + abs(this->y - boid.y) * abs(this->y - boid.y));
+		int dx = this->x - boid.x;
+		int dy = this->y - boid.y;
+		int distance_squared = (dx * dx) + (dy * dy);
 		if (distance_squared <= this->separation * this->separation) {
-			colliding_boids.push_back(boid);
+			//check if in field of view
+			double theta;
+			double local_theta;
+			if (this->vx == 0) {
+				theta = 0;
+				if (this->vy > 0) theta = 180;
+			} else {
+				theta = atan(this->vy / this->vx);
+			}
+			if (dx == 0) {
+				local_theta = 0;
+				if (dy > 0) theta = 180;
+			}
+			else {
+				local_theta = atan(dy / dx);
+			}
+			
+			if (abs(theta - local_theta) <= this->fov) {
+				colliding_boids.push_back(boid);
+			}
 		}
 	}
 
@@ -161,6 +182,8 @@ void Screen::step() {
 }
 
 bool Screen::render_texture() {
+
+
 	// set texture to render target
 	SDL_SetRenderTarget(this->renderer, this->texture);
 
@@ -168,13 +191,16 @@ bool Screen::render_texture() {
 	SDL_SetRenderDrawColor(this->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(this->renderer);
 
+	
+	
+
 	// set boid colour
 	SDL_SetRenderDrawColor(this->renderer, 0x00, 0x00, 0x00, 0xFF);
 	//set boid fillrect
 	
 
 	for (Boid boid : this->boids) {
-		SDL_Rect boid_rect{boid.x -1, boid.y -1, 2, 2};
+		SDL_Rect boid_rect{boid.x -2, boid.y -2, 4, 4};
 		// set boid colour
 		SDL_SetRenderDrawColor(this->renderer, boid.colour.r, boid.colour.g, boid.colour.b, 0xFF);
 		SDL_RenderFillRect(this->renderer, &boid_rect);
@@ -187,6 +213,7 @@ bool Screen::render_texture() {
 }
 
 bool Screen::render_screen() {
+	//SDL_SetTextureBlendMode(this->texture, SDL_BLENDMODE_BLEND);
 	SDL_RenderCopy(this->renderer, this->texture, nullptr, nullptr);
 	return true;
 }
@@ -194,4 +221,83 @@ bool Screen::render_screen() {
 bool Screen::add_boid(Boid boid) {
 	this->boids.push_back(boid);
 	return true;
+}
+
+void run_boids() {
+	
+
+	// constructs a screen class with a blank texture
+	Screen screen{ gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT };
+
+
+	// add 30 boids
+	for (int i = 0; i < 700; i++) {
+		float r0 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+		if (rand() % 2 == 0) {
+			r0 *= -1;
+		}
+		if (rand() % 2 == 0) {
+			r1 *= -1;
+		}
+
+		screen.add_boid(Boid{ rand() % SCREEN_WIDTH, rand() % SCREEN_HEIGHT, r0, r1, SCREEN_WIDTH, SCREEN_HEIGHT });
+	}
+
+
+	//Clear screen
+	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderClear(gRenderer);
+
+	//Main loop flag
+	bool quit = false;
+
+	//Event handler
+	SDL_Event e;
+
+	//While application is running
+	while (!quit)
+	{
+		//Handle events on queue
+		while (SDL_PollEvent(&e) != 0)
+		{
+			//User requests quit
+			if (e.type == SDL_QUIT)
+			{
+				quit = true;
+			}
+			//If mouse event happened
+
+			if (e.type == SDL_MOUSEBUTTONDOWN) {
+
+				int x, y;
+				SDL_GetMouseState(&x, &y);
+				/*
+				if (e.button.button == SDL_BUTTON_LEFT) {
+					std::cout << "stepping\n";
+					screen.step();
+					screen.render_texture();
+				}
+
+				else if (e.button.button == SDL_BUTTON_RIGHT) {
+
+				}
+				*/
+
+			}
+		}
+
+
+
+
+		//render texture to screen
+		screen.render_screen();
+		//screen.step();
+
+		//Update screen
+		SDL_RenderPresent(gRenderer);
+		screen.step();
+		screen.render_texture();
+	}
 }
