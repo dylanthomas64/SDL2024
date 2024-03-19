@@ -24,6 +24,8 @@ public:
 	double cohesion_factor{ 1 };
 	double turn_factor{ 1 };
 
+	SDL_Colour colour;
+
 	// screen dimensions
 	int w;
 	int h;

@@ -1,5 +1,6 @@
 #include "boid.h"
 #include <cmath>
+#include <algorithm>
 
 
 
@@ -13,6 +14,11 @@ Boid::Boid(int x, int y, float vx, float vy, int w, int h) {
 	this->max_speed = 3;
 	this->min_speed = 2;
 
+	this->colour.r = rand() % 255;
+	this->colour.g = rand() % 255;
+	this->colour.b = rand() % 255;
+	this->colour.a = 255;
+
 	this->w = w;
 	this->h = h;
 
@@ -20,9 +26,9 @@ Boid::Boid(int x, int y, float vx, float vy, int w, int h) {
 	this->vision_radius = 20;
 
 	this->avoidance_factor = 0.05;
-	this->alignment_factor = 0.005;
+	this->alignment_factor = 0.05;
 	this->cohesion_factor = 0.005;
-	this->turn_factor = 1.0;
+	this->turn_factor = 0.2;
 
 }
 
@@ -51,7 +57,7 @@ void Boid::react_to_local_boids(std::vector<Boid> all_boids) {
 	std::vector<Boid> colliding_boids{};
 	for (Boid boid : local_boids) {
 		int distance_squared = (abs(this->x - boid.x) * abs(this->x - boid.x) + abs(this->y - boid.y) * abs(this->y - boid.y));
-		if (distance_squared < this->separation * this->separation) {
+		if (distance_squared <= this->separation * this->separation) {
 			colliding_boids.push_back(boid);
 		}
 	}
@@ -68,8 +74,12 @@ void Boid::react_to_local_boids(std::vector<Boid> all_boids) {
 
 
 
+	//remove colliding boids from local boids ??
+
 	//alignment
 
+
+	
 	double avg_vx = 0;
 	double avg_vy = 0;
 	for (Boid boid : local_boids) {
@@ -80,21 +90,23 @@ void Boid::react_to_local_boids(std::vector<Boid> all_boids) {
 	avg_vy /= local_boids.size();
 	this->vx += avg_vx * alignment_factor;
 	this->vy += avg_vy * alignment_factor;
-
+	
 
 	//cohesion
 	int avg_x = 0;
 	int avg_y = 0;
 	for (Boid boid : local_boids) {
-		avg_x += boid.vx;
-		avg_y += boid.vy;
+		avg_x += boid.x;
+		avg_y += boid.y;
 	}
 	avg_x /= local_boids.size();
 	avg_y /= local_boids.size();
 
-	this->vx += (avg_x - this->x)*cohesion_factor;
-	this->vy += (avg_y - this->y)*cohesion_factor;
+	this->vx += (this->x - avg_x)*cohesion_factor;
+	this->vy += (this->y - avg_y)*cohesion_factor;
 
+
+	
 	// window edge detection
 	if (this->x < 0) this->vx += this->turn_factor;
 	if (this->x > this->w) this->vx -= this->turn_factor;
@@ -163,6 +175,8 @@ bool Screen::render_texture() {
 
 	for (Boid boid : this->boids) {
 		SDL_Rect boid_rect{boid.x -1, boid.y -1, 2, 2};
+		// set boid colour
+		SDL_SetRenderDrawColor(this->renderer, boid.colour.r, boid.colour.g, boid.colour.b, 0xFF);
 		SDL_RenderFillRect(this->renderer, &boid_rect);
 		SDL_RenderDrawPoint(this->renderer, boid.x, boid.y);
 	}

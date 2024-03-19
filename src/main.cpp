@@ -12,8 +12,8 @@ and may not be redistributed without written permission.*/
 #include "boid.h"
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 1080;
-const int SCREEN_HEIGHT = 1080;
+const int SCREEN_WIDTH = 560;
+const int SCREEN_HEIGHT = 560;
 
 
 //Starts up SDL and creates window
@@ -51,9 +51,16 @@ int main(int argc, char* args[])
 
 		
 		// add 30 boids
-		for (int i = 0; i < 300; i++) {
+		for (int i = 0; i < 900; i++) {
 			float r0 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 			float r1 = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+			if (rand() % 2 == 0) {
+				r0 *= -1;
+			}
+			if (rand() % 2 == 0) {
+				r1 *= -1;
+			}
 
 			screen.add_boid(Boid{ rand() % SCREEN_WIDTH, rand() % SCREEN_HEIGHT, r0, r1, SCREEN_WIDTH, SCREEN_HEIGHT });
 		}
@@ -85,7 +92,7 @@ int main(int argc, char* args[])
 
 					int x, y;
 					SDL_GetMouseState(&x, &y);
-
+					/*
 					if (e.button.button == SDL_BUTTON_LEFT) {
 						std::cout << "stepping\n";
 						screen.step();
@@ -95,7 +102,7 @@ int main(int argc, char* args[])
 					else if (e.button.button == SDL_BUTTON_RIGHT) {
 							
 					}
-
+					*/
 						
 				}
 			}
@@ -110,6 +117,8 @@ int main(int argc, char* args[])
 
 			//Update screen
 			SDL_RenderPresent(gRenderer);
+			screen.step();
+			screen.render_texture();
 			}
 	}
 
